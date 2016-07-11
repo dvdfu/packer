@@ -1,7 +1,15 @@
+local FORMATS = {
+    png = 1,
+    jpg = 1,
+    gif = 1,
+    bmp = 1,
+}
+
 local images = {}
 local layout = {}
 local cells = {}
 
+-- TODO variable size
 local size = 256
 local canvas
 
@@ -13,28 +21,11 @@ function love.load(arg)
     assert(source, 'Must specify a source directory to pack!')
 
     local sprites = {}
-    local files = love.filesystem.getDirectoryItems(source)
-    print('Loaded '..#files..' sprites.')
-
-    for _, file in pairs(files) do
-        -- TODO recursive
-        -- TODO check file type
-        local image = love.graphics.newImage(source..'/'..file)
-        images[file] = image
-        table.insert(sprites, {
-            file = file,
-            w = image:getWidth(),
-            h = image:getHeight()
-        })
-    end
+    loadFiles(source, sprites)
 
     table.sort(sprites, function(a, b)
         return area(a) > area(b)
     end)
-
-    -- for name, sprite in pairs(sprites) do
-    --     print(sprite.w * sprite.h, name)
-    -- end
 
     table.insert(cells, { x = 0, y = 0, w = size, h = size })
 
@@ -42,6 +33,7 @@ function love.load(arg)
         pack(sprite)
     end
 
+    -- TODO specify image format
     canvas = love.graphics.newCanvas(size, size, 'rgba8', 0)
     love.graphics.setCanvas(canvas)
     for _, item in pairs(layout) do
@@ -50,7 +42,22 @@ function love.load(arg)
     love.graphics.setCanvas()
 
     local data = canvas:newImageData()
-    data:encode('png', 'test.png')
+    data:encode('png', output..'.png')
+end
+
+function loadFiles(folder, sprites)
+    local files = love.filesystem.getDirectoryItems(folder)
+        -- TODO recursive
+        -- TODO validate image extensions
+        for _, name in pairs(files) do
+        local image = love.graphics.newImage(source..'/'..name)
+        images[name] = image
+        table.insert(sprites, {
+            name = name,
+            w = image:getWidth(),
+            h = image:getHeight()
+        })
+    end
 end
 
 function area(item)
@@ -82,8 +89,8 @@ function pack(sprite)
                 h = cell.h - sprite.h
             }
 
-            if area(c2) > 0 then table.insert(cells, c2) end
             if area(c1) > 0 then table.insert(cells, c1) end
+            if area(c2) > 0 then table.insert(cells, c2) end
             return
         end
     end
