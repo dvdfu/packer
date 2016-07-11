@@ -1,16 +1,18 @@
+local images = {}
 local layout = {}
-local sprites = {}
-local cells
+local cells = {}
 
 local size = 256
 local canvas
 
 function love.load(arg)
+    love.window.setMode(size, size)
     local source = arg[2]
     local output = arg[3]
 
     assert(source, 'Must specify a source directory to pack!')
 
+    local sprites = {}
     local files = love.filesystem.getDirectoryItems(source)
     print('Loaded '..#files..' sprites.')
 
@@ -18,8 +20,8 @@ function love.load(arg)
         -- TODO recursive
         -- TODO check file type
         local image = love.graphics.newImage(source..'/'..file)
+        images[file] = image
         table.insert(sprites, {
-            image = image,
             file = file,
             w = image:getWidth(),
             h = image:getHeight()
@@ -34,7 +36,7 @@ function love.load(arg)
     --     print(sprite.w * sprite.h, name)
     -- end
 
-    cells = { { x = 0, y = 0, w = size, h = size } }
+    table.insert(cells, { x = 0, y = 0, w = size, h = size })
 
     for _, sprite in pairs(sprites) do
         pack(sprite)
@@ -42,11 +44,13 @@ function love.load(arg)
 
     canvas = love.graphics.newCanvas(size, size, 'rgba8', 0)
     love.graphics.setCanvas(canvas)
-
     for _, item in pairs(layout) do
-        love.graphics.draw(item.image, item.x, item.y)
+        love.graphics.draw(images[item.file], item.x, item.y)
     end
     love.graphics.setCanvas()
+
+    local data = canvas:newImageData()
+    data:encode('png', 'test.png')
 end
 
 function area(item)
@@ -59,7 +63,6 @@ function pack(sprite)
             cells[i] = nil
 
             table.insert(layout, {
-                image = sprite.image,
                 file = sprite.file,
                 x = cell.x,
                 y = cell.y
@@ -93,6 +96,5 @@ end
 function love.update(dt) end
 
 function love.draw()
-    love.graphics.rectangle('line', 0, 0, size, size)
     love.graphics.draw(canvas)
 end
