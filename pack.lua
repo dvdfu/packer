@@ -43,21 +43,20 @@ end
 function loadFolder(self, folder)
     local files = love.filesystem.getDirectoryItems(folder)
     for _, name in pairs(files) do
-        if love.filesystem.isDirectory(folder..'/'..name) then
-            loadFolder(self, folder..'/'..name)
+        local fullPath = folder..'/'..name
+        local pos = string.find(fullPath, '/')
+        local path = string.sub(fullPath, pos + 1)
+        if love.filesystem.isDirectory(fullPath) then
+            loadFolder(self, fullPath)
         elseif isExtensionValid(name) then
-            if self.images[name] then
-                print('Ignoring file, duplicate filename: '..name)
-            else
-                local image = love.graphics.newImage(folder..'/'..name)
-                self.images[name] = image
-                self.fileCount = self.fileCount + 1
-                table.insert(self.rects, {
-                    name = name,
-                    w = image:getWidth(),
-                    h = image:getHeight()
-                })
-            end
+            local image = love.graphics.newImage(fullPath)
+            self.images[path] = image
+            self.fileCount = self.fileCount + 1
+            table.insert(self.rects, {
+                name = path,
+                w = image:getWidth(),
+                h = image:getHeight()
+            })
         else
             print('Ignoring file, bad extension: '..name)
         end
@@ -119,6 +118,9 @@ end
 
 function getArea(item)
     return item.w * item.h
+end
+
+function getPath(folder, name)
 end
 
 function toText(self)

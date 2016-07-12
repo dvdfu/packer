@@ -26,12 +26,11 @@ That's all! This packs all images in `source` and generates `output.png` and `ou
 Atlas = require 'modules.packer.atlas'
 
 atlas = Atlas.load('output')
-atlas.draw('sprite.png', ...) -- same arguments as love.graphics.draw(...)
+atlas.draw('player.png', ...)     -- same arguments as love.graphics.draw(...)
+atlas.draw('items/coin.png', ...) -- this sprite was located in a subfolder
 ```
 
 ## Notes
 
 * Packer exports images as RGBA8 .png files
-* any images in subfolders of `source` will also be packed
 * `.png .bmp .jpg .jpeg .gif` are supported. All other file types are ignored
-* duplicate filenames may occur from subfolders. In this case, the first loaded file is packed, and all duplicates are ignored
