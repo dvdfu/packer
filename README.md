@@ -26,8 +26,8 @@ That's all! This packs all images in `source` and generates `output.png` and `ou
 Atlas = require 'modules.packer.atlas'
 
 atlas = Atlas.load('output')
-atlas.draw('player.png', ...)     -- same arguments as love.graphics.draw(...)
-atlas.draw('items/coin.png', ...) -- this sprite was located in a subfolder
+atlas:draw('player.png', ...)     -- same arguments as love.graphics.draw(...)
+atlas:draw('items/coin.png', ...) -- this sprite was located in a subfolder
 ```
 
 ## Notes

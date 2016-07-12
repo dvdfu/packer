@@ -12,8 +12,9 @@ function Atlas.load(filename)
     end
 
     local atlas = {
-        draw = function(sprite, x, y, r, sx, sy, ox, oy, kx, ky)
-            love.graphics.draw(image, quads[sprite], x, y, r, sx, sy, ox, oy, kx, ky)
+        quads = quads,
+        draw = function(self, sprite, x, y, r, sx, sy, ox, oy, kx, ky)
+            love.graphics.draw(image, self.quads[sprite], x, y, r, sx, sy, ox, oy, kx, ky)
         end
     }
     return atlas
