@@ -1,5 +1,6 @@
-function Pack(source)
+function Pack(source, output)
     assert(source, 'Must specify a source directory to pack!')
+    assert(output, 'Must specify an output file name!')
 
     local self = {
         images = {},
@@ -21,9 +22,15 @@ function Pack(source)
         pack(self, rect)
     end
 
+    local image = toImage(self):newImageData()
+    local text = toText(self)
+
+    image:encode('png', output..'.png')
+    love.filesystem.write(output..'.lua', text)
+
     return {
-        images = self.images,
-        layout = self.layout,
+        image = image,
+        text = text,
         size = self.size
     }
 end
@@ -54,7 +61,9 @@ function pack(self, rect)
             table.insert(self.layout, {
                 name = rect.name,
                 x = cell.x,
-                y = cell.y
+                y = cell.y,
+                w = rect.w,
+                h = rect.h
             })
 
             local cell1 = {
@@ -100,6 +109,25 @@ end
 
 function getArea(item)
     return item.w * item.h
+end
+
+function toText(self)
+    local text = '{'
+    for _, item in pairs(self.layout) do
+        text = text..'{name='..item.name..',x='..item.x..',y='..item.y..',w='..item.w..',h='..item.h..'},'
+    end
+    text = text..'}'
+    return text
+end
+
+function toImage(self)
+    local canvas = love.graphics.newCanvas(self.size, self.size, 'rgba8', 0)
+    canvas:renderTo(function()
+        for _, item in pairs(self.layout) do
+            love.graphics.draw(self.images[item.name], item.x, item.y)
+        end
+    end)
+    return canvas
 end
 
 return Pack
