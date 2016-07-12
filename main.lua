@@ -1,22 +1,15 @@
-local FORMATS = {
-    png = 1,
-    jpg = 1,
-    gif = 1,
-    bmp = 1,
-}
-
 local images = {}
 local layout = {}
 local cells = {}
 
 -- TODO variable size
-local size = 256
+local size = 512
 local canvas
 
 function love.load(arg)
     love.window.setMode(size, size)
     local source = arg[2]
-    local output = arg[3]
+    local output = arg[3] or 'test'
 
     assert(source, 'Must specify a source directory to pack!')
 
@@ -37,7 +30,7 @@ function love.load(arg)
     canvas = love.graphics.newCanvas(size, size, 'rgba8', 0)
     love.graphics.setCanvas(canvas)
     for _, item in pairs(layout) do
-        love.graphics.draw(images[item.file], item.x, item.y)
+        love.graphics.draw(images[item.name], item.x, item.y)
     end
     love.graphics.setCanvas()
 
@@ -47,16 +40,22 @@ end
 
 function loadFiles(folder, sprites)
     local files = love.filesystem.getDirectoryItems(folder)
-        -- TODO recursive
+    for _, name in pairs(files) do
         -- TODO validate image extensions
-        for _, name in pairs(files) do
-        local image = love.graphics.newImage(source..'/'..name)
-        images[name] = image
-        table.insert(sprites, {
-            name = name,
-            w = image:getWidth(),
-            h = image:getHeight()
-        })
+        if love.filesystem.isDirectory(folder..'/'..name) then
+            print('entering directory '..name)
+            loadFiles(folder..'/'..name, sprites)
+        else
+            local ext = string.match(name, '^.+%.(.+)$')
+            assert(validExtension(ext), 'Found invalid file '..name)
+            local image = love.graphics.newImage(folder..'/'..name)
+            images[name] = image
+            table.insert(sprites, {
+                name = name,
+                w = image:getWidth(),
+                h = image:getHeight()
+            })
+        end
     end
 end
 
@@ -70,7 +69,7 @@ function pack(sprite)
             cells[i] = nil
 
             table.insert(layout, {
-                file = sprite.file,
+                name = sprite.name,
                 x = cell.x,
                 y = cell.y
             })
@@ -98,6 +97,16 @@ end
 
 function fits(sprite, cell)
     return sprite.w <= cell.w and sprite.h <= cell.h
+end
+
+function validExtension(ext)
+    local extensions = {
+        png = 1,
+        jpg = 1,
+        gif = 1,
+        bmp = 1,
+    }
+    return extensions[ext]
 end
 
 function love.update(dt) end
