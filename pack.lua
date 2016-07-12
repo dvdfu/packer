@@ -7,12 +7,14 @@ function Pack(source, output)
         rects = {},
         cells = {},
         layout = {},
+        fileCount = 0,
         size = 512
     }
 
     table.insert(self.cells, { x = 0, y = 0, w = self.size, h = self.size })
 
     loadFolder(self, source)
+    print('Loaded '..self.fileCount..' sprites from '..source..'/')
 
     table.sort(self.rects, function(a, b)
         return getArea(a) > getArea(b)
@@ -24,9 +26,12 @@ function Pack(source, output)
 
     local image = toImage(self):newImageData()
     local text = toText(self)
+    local dir = love.filesystem.getSaveDirectory()
 
     image:encode('png', output..'.png')
+    print('Saved '..dir..'/'..output..'.png')
     love.filesystem.write(output..'.lua', text)
+    print('Saved '..dir..'/'..output..'.lua')
 
     return {
         image = image,
@@ -43,6 +48,7 @@ function loadFolder(self, folder)
         elseif isExtensionValid(name) then
             local image = love.graphics.newImage(folder..'/'..name)
             self.images[name] = image
+            self.fileCount = self.fileCount + 1
             table.insert(self.rects, {
                 name = name,
                 w = image:getWidth(),
