@@ -12,6 +12,8 @@ function Atlas.load(filename)
     end
 
     local atlas = {
+        data = data,
+        image = image,
         quads = quads,
         quadSplit = function(self, sprite, n)
             local x, y, w, h = self.quads[sprite]:getViewport()
