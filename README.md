@@ -1,8 +1,6 @@
 # Packer
 
-Packer is a tool for Love2D games that pack sprites into a [texture atlas](https://en.wikipedia.org/wiki/Texture_atlas), which can increase game  performance.
-
-Packer is **currently under development**.
+Packer is a tool for Love2D games that pack sprites into a [texture atlas](https://en.wikipedia.org/wiki/Texture_atlas), which can increase game  performance. This project is **incomplete and currently under development**.
 
 ## Usage
 
@@ -36,3 +34,4 @@ atlas.draw('sprite.png', ...) -- same arguments as love.graphics.draw(...)
 * Packer exports images as RGBA8 .png files
 * any images in subfolders of `source` will also be packed
 * `.png .bmp .jpg .jpeg .gif` are supported. All other file types are ignored
+* duplicate filenames may occur from subfolders. In this case, the first loaded file is packed, and all duplicates are ignored

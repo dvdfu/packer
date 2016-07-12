@@ -46,14 +46,18 @@ function loadFolder(self, folder)
         if love.filesystem.isDirectory(folder..'/'..name) then
             loadFolder(self, folder..'/'..name)
         elseif isExtensionValid(name) then
-            local image = love.graphics.newImage(folder..'/'..name)
-            self.images[name] = image
-            self.fileCount = self.fileCount + 1
-            table.insert(self.rects, {
-                name = name,
-                w = image:getWidth(),
-                h = image:getHeight()
-            })
+            if self.images[name] then
+                print('Ignoring file, duplicate filename: '..name)
+            else
+                local image = love.graphics.newImage(folder..'/'..name)
+                self.images[name] = image
+                self.fileCount = self.fileCount + 1
+                table.insert(self.rects, {
+                    name = name,
+                    w = image:getWidth(),
+                    h = image:getHeight()
+                })
+            end
         else
             print('Ignoring file, bad extension: '..name)
         end
