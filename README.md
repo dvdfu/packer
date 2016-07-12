@@ -22,12 +22,13 @@ $ love modules/packer [source] [output]
 
 That's all! This packs all images in `source` and generates `output.png` and `output.lua` in your [save directory](https://love2d.org/wiki/love.filesystem). Move them to your game project.
 
-## Loading Atlases
+## Drawing Sprites
 
 ```lua
 Atlas = require 'modules.packer.atlas'
 
-textureAtlas = Atlas.load('output')
+atlas = Atlas.load('output')
+atlas.draw('sprite.png', ...) -- same arguments as love.graphics.draw(...)
 ```
 
 ## Notes

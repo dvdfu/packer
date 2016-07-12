@@ -112,9 +112,9 @@ function getArea(item)
 end
 
 function toText(self)
-    local text = '{'
+    local text = 'return {'
     for _, item in pairs(self.layout) do
-        text = text..'{name='..item.name..',x='..item.x..',y='..item.y..',w='..item.w..',h='..item.h..'},'
+        text = text..'{name="'..item.name..'",x='..item.x..',y='..item.y..',w='..item.w..',h='..item.h..'},'
     end
     text = text..'}'
     return text
