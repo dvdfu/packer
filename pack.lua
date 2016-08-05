@@ -8,10 +8,11 @@ function Pack(source, output)
         cells = {},
         layout = {},
         fileCount = 0,
-        size = 512
+        width = 128,
+        height = 128
     }
 
-    table.insert(self.cells, { x = 0, y = 0, w = self.size, h = self.size })
+    table.insert(self.cells, { x = 0, y = 0, w = self.width, h = self.height })
 
     loadFolder(self, source)
     print('Loaded '..self.fileCount..' sprites from '..source..'/')
@@ -36,7 +37,7 @@ function Pack(source, output)
     return {
         image = image,
         text = text,
-        size = self.size
+        size = getSquareSize(self)
     }
 end
 
@@ -120,7 +121,13 @@ function getArea(item)
     return item.w * item.h
 end
 
-function getPath(folder, name)
+function getSquareSize(self)
+    local i = 1
+    local s = math.max(self.width, self.height)
+    while i < s do
+        i = i * 2
+    end
+    return i
 end
 
 function toText(self)
@@ -133,7 +140,8 @@ function toText(self)
 end
 
 function toImage(self)
-    local canvas = love.graphics.newCanvas(self.size, self.size, 'rgba8', 0)
+    local size = getSquareSize(self)
+    local canvas = love.graphics.newCanvas(size, size, 'rgba8', 0)
     canvas:renderTo(function()
         for _, item in pairs(self.layout) do
             love.graphics.draw(self.images[item.name], item.x, item.y)

@@ -14,3 +14,7 @@ end
 function love.draw()
     love.graphics.draw(image)
 end
+
+function love.keypressed()
+    love.event.push('quit')
+end
