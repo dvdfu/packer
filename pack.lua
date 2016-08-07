@@ -3,16 +3,15 @@ function Pack(source, output)
     assert(output, 'Must specify an output file name!')
 
     local self = {
-        images = {},
-        rects = {},
-        cells = {},
-        layout = {},
+        images = {}, -- map filename to image data
+        rects = {},  -- array of filenames and image dimensions
+        cells = {},  -- array of open cells for placement
+        layout = {}, -- array of filenames and placement information
         fileCount = 0,
-        width = 128,
-        height = 128
+        initialized = false,
+        width = 0,
+        height = 0
     }
-
-    table.insert(self.cells, { x = 0, y = 0, w = self.width, h = self.height })
 
     loadFolder(self, source)
     print('Loaded '..self.fileCount..' sprites from '..source..'/')
@@ -65,9 +64,22 @@ function loadFolder(self, folder)
 end
 
 function pack(self, rect)
+    if not self.initialized then
+        table.insert(self.cells, {
+            x = 0,
+            y = 0,
+            w = rect.w,
+            h = rect.h
+        })
+
+        self.initialized = true
+        self.width = rect.w
+        self.height = rect.h
+        return pack(self, rect)
+    end
+
     for i, cell in pairs(self.cells) do
         if isFit(rect, cell) then
-
             table.insert(self.layout, {
                 name = rect.name,
                 x = cell.x,
@@ -76,14 +88,14 @@ function pack(self, rect)
                 h = rect.h
             })
 
-            local cell1 = {
+            local cellRight = {
                 x = cell.x + rect.w,
                 y = cell.y,
                 w = cell.w - rect.w,
                 h = rect.h
             }
 
-            local cell2 = {
+            local cellDown = {
                 x = cell.x,
                 y = cell.y + rect.h,
                 w = cell.w,
@@ -91,14 +103,57 @@ function pack(self, rect)
             }
 
             self.cells[i] = nil
-            if getArea(cell1) > 0 then table.insert(self.cells, cell1) end
-            if getArea(cell2) > 0 then table.insert(self.cells, cell2) end
+            if getArea(cellRight) > 0 then table.insert(self.cells, cellRight) end
+            if getArea(cellDown) > 0 then table.insert(self.cells, cellDown) end
             return true
         end
     end
 
-    print('Could not fit '..rect.name)
-    return false
+    if self.width < self.height then
+        -- grow right
+        table.insert(self.cells, {
+            x = self.width,
+            y = 0,
+            w = rect.w,
+            h = self.height
+        })
+
+        if rect.h > self.height then
+            table.insert(self.cells, {
+                x = 0,
+                y = self.height,
+                w = self.width,
+                h = rect.h - self.height
+            })
+            self.height = rect.h
+        end
+
+        self.width = self.width + rect.w
+    else
+        -- grow down
+        table.insert(self.cells, {
+            x = 0,
+            y = self.height,
+            w = self.width,
+            h = rect.h
+        })
+
+        if rect.w > self.width then
+            table.insert(self.cells, {
+                x = self.width,
+                y = 0,
+                w = rect.w - self.width,
+                h = self.height
+            })
+            self.width = rect.w
+        end
+
+        self.height = self.height + rect.h
+    end
+
+    print('Grew canvas to '..self.width..'x'..self.height)
+
+    return pack(self, rect)
 end
 
 function isExtensionValid(filename)
@@ -122,12 +177,13 @@ function getArea(item)
 end
 
 function getSquareSize(self)
-    local i = 1
-    local s = math.max(self.width, self.height)
-    while i < s do
-        i = i * 2
-    end
-    return i
+    return math.max(self.width, self.height)
+    -- local i = 1
+    -- local s = math.max(self.width, self.height)
+    -- while i < s do
+    --     i = i * 2
+    -- end
+    -- return i
 end
 
 function toText(self)
