@@ -10,7 +10,8 @@ function Pack(source, output)
         fileCount = 0,
         initialized = false,
         width = 0,
-        height = 0
+        height = 0,
+        padding = 2
     }
 
     loadFolder(self, source)
@@ -54,8 +55,8 @@ function loadFolder(self, folder)
             self.fileCount = self.fileCount + 1
             table.insert(self.rects, {
                 name = path,
-                w = image:getWidth(),
-                h = image:getHeight()
+                w = image:getWidth() + self.padding * 2,
+                h = image:getHeight() + self.padding * 2
             })
         else
             print('Ignoring file, bad extension: '..name)
@@ -187,11 +188,11 @@ function getSquareSize(self)
 end
 
 function toText(self)
-    local text = 'return {'
+    local text = 'return {padding='..self.padding..',images={'
     for _, item in pairs(self.layout) do
         text = text..'{name="'..item.name..'",x='..item.x..',y='..item.y..',w='..item.w..',h='..item.h..'},'
     end
-    text = text..'}'
+    text = text..'}}'
     return text
 end
 
@@ -200,7 +201,9 @@ function toImage(self)
     local canvas = love.graphics.newCanvas(size, size, 'rgba8', 0)
     canvas:renderTo(function()
         for _, item in pairs(self.layout) do
-            love.graphics.draw(self.images[item.name], item.x, item.y)
+            love.graphics.draw(self.images[item.name],
+                item.x + self.padding,
+                item.y + self.padding)
         end
     end)
     return canvas

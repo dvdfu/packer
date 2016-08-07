@@ -7,12 +7,17 @@ function Atlas.load(filename)
     local sw, sh = image:getDimensions()
     local quads = {}
 
-    for sprite, rect in pairs(data) do
-        quads[rect.name] = love.graphics.newQuad(rect.x, rect.y, rect.w, rect.h, sw, sh)
+    for sprite, rect in pairs(data.images) do
+        quads[rect.name] = love.graphics.newQuad(
+            rect.x + data.padding,
+            rect.y + data.padding,
+            rect.w - data.padding * 2,
+            rect.h - data.padding * 2,
+            sw, sh)
     end
 
     local atlas = {
-        data = data,
+        data = data.images,
         image = image,
         quads = quads,
         quadSplit = function(self, sprite, n)
