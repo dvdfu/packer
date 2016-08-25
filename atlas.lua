@@ -5,7 +5,11 @@ function Sprite.new(source, quad)
         source = source,
         quad = quad,
         draw = function(self, x, y, r, sx, sy, ox, oy, kx, ky)
-            love.graphics.draw(self.source, self.quad, math.floor(x), math.floor(y), r, sx, sy, ox, oy, kx, ky)
+            if self.quad then
+                love.graphics.draw(self.source, self.quad, math.floor(x), math.floor(y), r, sx, sy, ox, oy, kx, ky)
+            else
+                love.graphics.draw(self.source, math.floor(x), math.floor(y), r, sx, sy, ox, oy, kx, ky)
+            end
         end
     }
 end
@@ -13,7 +17,7 @@ end
 local Atlas = {}
 
 function Atlas.load(filename)
-    local image = love.graphics.newImage(filename..'.png')
+    local image = love.graphics.newImage(filename .. '.png')
     local data = require(filename)
 
     local sw, sh = image:getDimensions()
