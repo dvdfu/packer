@@ -1,3 +1,15 @@
+local Sprite = {}
+
+function Sprite.new(source, quad)
+    return {
+        source = source,
+        quad = quad,
+        draw = function(self, x, y, r, sx, sy, ox, oy, kx, ky)
+            love.graphics.draw(self.source, self.quad, math.floor(x), math.floor(y), r, sx, sy, ox, oy, kx, ky)
+        end
+    }
+end
+
 local Atlas = {}
 
 function Atlas.load(filename)
@@ -30,6 +42,10 @@ function Atlas.load(filename)
         end,
         draw = function(self, sprite, x, y, r, sx, sy, ox, oy, kx, ky)
             love.graphics.draw(image, self.quads[sprite], x, y, r, sx, sy, ox, oy, kx, ky)
+        end,
+        newSprite = function(self, name)
+            assert(self.quads[name])
+            return Sprite.new(self.image, self.quads[name])
         end
     }
     return atlas
