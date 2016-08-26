@@ -6,7 +6,7 @@ function Sprite(source, quad)
             return self.quad
         end,
         draw = function(self, x, y, r, sx, sy, ox, oy, kx, ky)
-            love.graphics.draw(self.source, self.quad, math.floor(x), math.floor(y), r, sx, sy, ox, oy, kx, ky)
+            love.graphics.draw(self.source, self.quad, x, y, r, sx, sy, ox, oy, kx, ky)
         end
     }
 end
@@ -16,15 +16,22 @@ function Animation(source, quads, framerate)
         source = source,
         quads = quads,
         framerate = framerate,
-        timer = 0,
+        tick = 0,
         frame = 1,
         getQuads = function(self)
             return self.quads
         end,
+        setFramerate = function(self, framerate)
+            self.framerate = framerate
+        end,
+        setFrame = function(self, frame)
+            self.frame = (frame - 1) % #self.quads + 1
+            self.tick = 0
+        end,
         update = function(self, dt)
-            self.timer = self.timer + dt
-            while self.timer > self.framerate do
-                self.timer = self.timer - self.framerate
+            self.tick = self.tick + dt
+            while self.tick > self.framerate do
+                self.tick = self.tick - self.framerate
                 self.frame = self.frame + 1
                 if self.frame > #self.quads then
                     self.frame = self.frame - #self.quads
@@ -33,7 +40,7 @@ function Animation(source, quads, framerate)
         end,
         draw = function(self, x, y, r, sx, sy, ox, oy, kx, ky)
             local quad = self.quads[self.frame]
-            love.graphics.draw(self.source, quad, math.floor(x), math.floor(y), r, sx, sy, ox, oy, kx, ky)
+            love.graphics.draw(self.source, quad, x, y, r, sx, sy, ox, oy, kx, ky)
         end
     }
 end
