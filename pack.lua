@@ -11,7 +11,7 @@ function Pack(source, output)
         initialized = false,
         width = 0,
         height = 0,
-        padding = 2
+        padding = 0
     }
 
     loadFolder(self, source)

@@ -37,6 +37,13 @@ function Animation(source, quads, framerate)
                     self.frame = self.frame - #self.quads
                 end
             end
+            while self.tick < 0 do
+                self.tick = self.tick + self.framerate
+                self.frame = self.frame - 1
+                if self.frame < 1 then
+                    self.frame = self.frame + #self.quads
+                end
+            end
         end,
         draw = function(self, x, y, r, sx, sy, ox, oy, kx, ky)
             local quad = self.quads[self.frame]
