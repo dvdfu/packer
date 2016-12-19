@@ -76,5 +76,14 @@ animation:update(dt)
 ```
 
 ```lua
+animation:setFrame(frame)
+```
+Sets the frame of the animation, in the range `[1, frameCount]`. Uses modulus to resolve out-of-bound frames.
+
+```lua
+animation:setFramerate(framerate)
+```
+
+```lua
 animation:draw(...)
 ```
