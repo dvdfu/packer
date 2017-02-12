@@ -18,6 +18,7 @@ function Animation(source, quads, framerate)
         framerate = framerate,
         tick = 0,
         frame = 1,
+        played = false,
         getQuads = function(self)
             return self.quads
         end,
@@ -28,6 +29,17 @@ function Animation(source, quads, framerate)
             self.frame = (frame - 1) % #self.quads + 1
             self.tick = 0
         end,
+        getFrame = function(self)
+            return self.frame
+        end,
+        reset = function(self)
+            self.frame = 0
+            self.tick = 0
+            self.played = false
+        end,
+        hasPlayed = function(self)
+            return self.played
+        end,
         update = function(self, dt)
             self.tick = self.tick + dt
             while self.tick > self.framerate do
@@ -35,6 +47,7 @@ function Animation(source, quads, framerate)
                 self.frame = self.frame + 1
                 if self.frame > #self.quads then
                     self.frame = self.frame - #self.quads
+                    self.played = true
                 end
             end
             while self.tick < 0 do
