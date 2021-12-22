@@ -54,7 +54,9 @@ function loadFolder(self, folder)
         local fullPath = folder..'/'..name
         local pos = string.find(fullPath, '/')
         local path = string.sub(fullPath, pos + 1)
-        if love.filesystem.isDirectory(fullPath) then
+        local fileInfo = love.filesystem.getInfo(tostring(fullpath))
+        --if love.filesystem.isDirectory(fullPath) then
+        if fileInfo == 'directory' then
             loadFolder(self, fullPath)
         elseif isExtensionValid(name) then
             local image = love.graphics.newImage(fullPath)
