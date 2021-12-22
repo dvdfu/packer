@@ -1,6 +1,6 @@
 function love.conf(t)
     t.identity = 'packer'
-    t.version = '0.10.1'
+    t.version = '11.3'
 
     t.window.title = 'Packer'
 
@@ -15,4 +15,5 @@ function love.conf(t)
     t.modules.touch = false
     t.modules.video = false
     t.modules.thread = false
+    t.console = true
 end
