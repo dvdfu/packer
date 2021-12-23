@@ -21,10 +21,17 @@ function Pack(source, output)
         return getArea(a) > getArea(b)
     end)
 
+
+
     for _, rect in pairs(self.rects) do
         pack(self, rect)
     end
 
+
+    self.width = self.width - 1
+    self.height = self.height - 1
+    
+    
     local image = toImage(self):newImageData()
     local text = toText(self)
     local dir = love.filesystem.getSaveDirectory()
@@ -47,7 +54,9 @@ function loadFolder(self, folder)
         local fullPath = folder..'/'..name
         local pos = string.find(fullPath, '/')
         local path = string.sub(fullPath, pos + 1)
-        if love.filesystem.isDirectory(fullPath) then
+        local fileInfo = love.filesystem.getInfo(tostring(fullpath))
+        --if love.filesystem.isDirectory(fullPath) then
+        if fileInfo == 'directory' then
             loadFolder(self, fullPath)
         elseif isExtensionValid(name) then
             local image = love.graphics.newImage(fullPath)
@@ -113,8 +122,8 @@ function pack(self, rect)
     if self.width < self.height then
         -- grow right
         table.insert(self.cells, {
-            x = self.width,
-            y = 0,
+            x = self.width-1,
+            y = 0-1,
             w = rect.w,
             h = self.height
         })
@@ -198,7 +207,8 @@ end
 
 function toImage(self)
     local size = getSquareSize(self)
-    local canvas = love.graphics.newCanvas(size, size, 'rgba8', 0)
+    local canvas = love.graphics.newCanvas(size+1, size+1, {format='rgba8', msaa=0})
+    --local canvas = love.graphics.newCanvas(size, size, 'rgba8', 0)
     canvas:renderTo(function()
         for _, item in pairs(self.layout) do
             love.graphics.draw(self.images[item.name],
