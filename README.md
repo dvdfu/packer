@@ -1,6 +1,6 @@
 # Packer
 
-Packer is a tool for Love2D games that pack sprites into a [texture atlas](https://en.wikipedia.org/wiki/Texture_atlas), which can increase game  performance. This project is **incomplete and currently under development**.
+Packer is a tool for Love2D games that pack sprites into a [texture atlas](https://en.wikipedia.org/wiki/Texture_atlas) (or sprite sheet), which can increase game  performance. This project is **incomplete and currently under development**.
 
 ## Usage
 
@@ -23,12 +23,12 @@ That's all! This packs all images in `source` and generates `output.png` and `ou
 ## Drawing Sprites
 
 ```lua
-Atlas = require 'modules.packer.atlas'
+Atlas = require 'modules/packer/atlas'
 
 atlas = Atlas.load('output') -- load a texture atlas
 
-playerSprite = atlas:getSprite('player.png')   -- fetch a sprite from a texture atlas
-coinSprite = atlas:getSprite('items/coin.png') -- this sprite was located in a subfolder
+playerSprite = atlas:newSprite('player.png')   -- fetch a sprite from a texture atlas
+coinSprite = atlas:newSprite('items/coin.png') -- this sprite was located in a subfolder
 
 coinSprite:draw(...) -- same arguments as love.graphics.draw(image, ...)
 ```
